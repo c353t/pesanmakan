@@ -356,11 +356,11 @@ html, body {
       <form id="formPesan" onsubmit="handleUserSubmit(event)">
         <div class="mb-3">
           <label class="form-label"><i class="fa-solid fa-id-card me-1 text-info"></i> Nama Pemesan</label>
-          <input type="text" id="nama" class="form-control" required placeholder="Masukkan Nama">
+          <input type="text" id="nama" class="form-control" required placeholder="">
         </div>
         <div class="mb-3">
           <label class="form-label"><i class="fa-solid fa-bowl-food me-1 text-info"></i> Pesanan</label>
-          <textarea id="pesanan" class="form-control" rows="2" required placeholder="Tuliskan makanan/minuman"></textarea>
+          <textarea id="pesanan" class="form-control" rows="2" required placeholder=""></textarea>
         </div>
         
         <div class="mb-3">
@@ -381,7 +381,7 @@ html, body {
                 </div>
               </div>
               <small id="noteCash" class="text-danger fw-semibold d-block mt-1 hidden" style="font-size: 0.75rem; line-height: 1.3;">
-                Silakan di berikan uangnya ke petugas yang membelikan
+                Silakan berikan uangnya ke petugas yang membelikan
               </small>
             </div>
 
@@ -408,7 +408,7 @@ html, body {
           <label class="form-label mb-1"><i class="fa-solid fa-money-bill-wave me-1 text-info"></i> Uang Diberikan (Rp)</label>
           <div class="rp-input-group mb-2">
             <span class="rp-prefix">Rp</span>
-            <input type="text" id="uang" class="form-control fw-bold fs-6" required placeholder="50.000" oninput="formatInputRibuan(this)">
+            <input type="text" id="uang" class="form-control fw-bold fs-6" required placeholder="" oninput="formatInputRibuan(this)">
           </div>
 
           <div class="d-flex gap-2 flex-wrap">
@@ -420,7 +420,7 @@ html, body {
 
         <div class="mb-3">
           <label class="form-label"><i class="fa-solid fa-note-sticky me-1 text-info"></i> Catatan (Opsional)</label>
-          <textarea id="catatan" class="form-control" rows="2" placeholder="Contoh: Tidak Pedas"></textarea>
+          <textarea id="catatan" class="form-control" rows="2" placeholder=""></textarea>
         </div>
         <button type="submit" id="btnSubmitUser" class="btn btn-glow-primary w-100 py-2.5 fw-bold fs-6">
           <i class="fa-solid fa-paper-plane me-2"></i> Kirim Pesanan
