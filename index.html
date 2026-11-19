@@ -56,11 +56,15 @@ html, body {
       touch-action: pan-y !important;
     }
 
-    body.lock-scroll {
+    html.lock-scroll, body.lock-scroll {
+      position: fixed !important;
+      inset: 0 !important;
+      width: 100% !important;
       height: 100dvh !important;
       overflow: hidden !important;
       overscroll-behavior: none !important;
-    }
+      touch-action: none !important;
+}
 
     .main-wrapper {
       width: 100% !important;
@@ -711,6 +715,7 @@ html, body {
   // TEMPELKAN URL WEB APP GOOGLE APPS SCRIPT ANDA DI BAWAH INI:
   // =========================================================================
   const GAS_API_URL = "https://script.google.com/macros/s/AKfycbzqlhQgF9IRIXnoO0MHhQ-yUZQlsFHlOfujPNpzphS_QjkhhMOUPPhQakYi17vMqlDh0g/exec";
+  document.documentElement.classList.add('lock-scroll');
   document.body.classList.add('lock-scroll');
 
   let cachedData = [];
@@ -850,6 +855,7 @@ function selectMetode(val) {
     hideAllScreens();
     document.getElementById('screenRole').classList.remove('hidden');
     document.body.classList.add('lock-scroll');
+    document.documentElement.classList.add('lock-scroll');
   }
 
   async function showUserScreen() {
@@ -861,6 +867,7 @@ function selectMetode(val) {
       hideAllScreens();
       document.getElementById('screenUser').classList.remove('hidden');
       document.body.classList.remove('lock-scroll');
+      document.documentElement.classList.remove('lock-scroll');
       currentStatusToko = status || 'BUKA';
       applyStatusTokoUI();
       switchUserTab('form');
@@ -890,6 +897,7 @@ function selectMetode(val) {
     document.getElementById('screenLogin').classList.remove('hidden'); 
     document.getElementById('formPesan').reset();
     document.body.classList.remove('lock-scroll');
+    document.documentElement.classList.remove('lock-scroll');
     selectMetode('');
   }
 
