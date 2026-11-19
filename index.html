@@ -42,24 +42,30 @@
 
     *, *:before, *:after { box-sizing: border-box !important; }
 
-    html, body {
+html, body {
       width: 100vw !important;
       max-width: 100% !important;
-      min-height: 100vh !important;
+      min-height: 100dvh !important;
       margin: 0 !important;
       padding: 0 !important;
       background-color: var(--bg-color) !important;
       background: var(--bg-gradient) fixed !important;
       color: var(--text-main);
-      font-family: 'Plus Jakarta Sans', sans-serif; 
+      font-family: 'Plus Jakarta Sans', sans-serif;
       overflow-x: hidden !important;
       touch-action: pan-y !important;
+    }
+
+    body.lock-scroll {
+      height: 100dvh !important;
+      overflow: hidden !important;
+      overscroll-behavior: none !important;
     }
 
     .main-wrapper {
       width: 100% !important;
       max-width: 100% !important;
-      min-height: 100vh !important;
+      min-height: 100dvh !important;
       display: flex !important;
       justify-content: center !important;
       align-items: center !important;
@@ -705,6 +711,7 @@
   // TEMPELKAN URL WEB APP GOOGLE APPS SCRIPT ANDA DI BAWAH INI:
   // =========================================================================
   const GAS_API_URL = "https://script.google.com/macros/s/AKfycbzqlhQgF9IRIXnoO0MHhQ-yUZQlsFHlOfujPNpzphS_QjkhhMOUPPhQakYi17vMqlDh0g/exec";
+  document.body.classList.add('lock-scroll');
 
   let cachedData = [];
   let bsModalInstance = null;
@@ -842,6 +849,7 @@ function selectMetode(val) {
     stopAutoRefreshAdmin();
     hideAllScreens();
     document.getElementById('screenRole').classList.remove('hidden');
+    document.body.classList.add('lock-scroll');
   }
 
   async function showUserScreen() {
@@ -852,6 +860,7 @@ function selectMetode(val) {
       hideLoader();
       hideAllScreens();
       document.getElementById('screenUser').classList.remove('hidden');
+      document.body.classList.remove('lock-scroll');
       currentStatusToko = status || 'BUKA';
       applyStatusTokoUI();
       switchUserTab('form');
@@ -880,6 +889,7 @@ function selectMetode(val) {
     hideAllScreens();
     document.getElementById('screenLogin').classList.remove('hidden'); 
     document.getElementById('formPesan').reset();
+    document.body.classList.remove('lock-scroll');
     selectMetode('');
   }
 
