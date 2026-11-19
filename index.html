@@ -1,0 +1,1386 @@
+<!DOCTYPE html>
+<html lang="id" data-bs-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Aplikasi Pesan Makan</title>
+  
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+  
+  <style>
+    :root {
+      --bg-color: #0b1329;
+      --bg-gradient: linear-gradient(135deg, #0b1329 0%, #172554 100%);
+      --glass-bg: rgba(30, 41, 59, 0.95);
+      --glass-border: rgba(255, 255, 255, 0.15);
+      --text-main: #ffffff !important;         
+      --text-sub: #cbd5e1 !important;          
+      --accent-blue: #38bdf8 !important;       
+      --card-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+      --input-bg: #1e293b !important;          
+      --input-border: #475569 !important;      
+      --modal-bg: #1e293b;
+    }
+
+    [data-bs-theme="light"] {
+      --bg-color: #f1f5f9;
+      --bg-gradient: linear-gradient(135deg, #e2e8f0 0%, #f1f5f9 100%);
+      --glass-bg: rgba(255, 255, 255, 0.95);
+      --glass-border: rgba(15, 23, 42, 0.12);
+      --text-main: #0f172a !important;         
+      --text-sub: #475569 !important;          
+      --accent-blue: #0284c7 !important;       
+      --card-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+      --input-bg: #ffffff !important;
+      --input-border: #cbd5e1 !important;
+      --modal-bg: #ffffff;
+    }
+
+    *, *:before, *:after { box-sizing: border-box !important; }
+
+    html, body {
+      width: 100vw !important;
+      max-width: 100% !important;
+      min-height: 100vh !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      background-color: var(--bg-color) !important;
+      background: var(--bg-gradient) fixed !important;
+      color: var(--text-main);
+      font-family: 'Plus Jakarta Sans', sans-serif; 
+      overflow-x: hidden !important;
+      touch-action: pan-y !important;
+    }
+
+    .main-wrapper {
+      width: 100% !important;
+      max-width: 100% !important;
+      min-height: 100vh !important;
+      display: flex !important;
+      justify-content: center !important;
+      align-items: center !important;
+      padding: 20px 12px !important;
+    }
+    
+    .glass-card { 
+      background: var(--glass-bg);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid var(--glass-border);
+      border-radius: 20px; 
+      box-shadow: var(--card-shadow); 
+      overflow: hidden;
+      margin: 0 auto !important;
+    }
+
+    .card-box { width: 360px !important; max-width: 100% !important; }
+    .card-user { width: 780px !important; max-width: 100% !important; } 
+    .card-dashboard { width: 1200px !important; max-width: 100% !important; }
+    .hidden { display: none !important; }
+
+    .btn-role-gradient {
+      width: 100% !important;
+      height: 46px;
+      font-size: 0.92rem;
+      font-weight: 700;
+      border-radius: 12px;
+      border: 1px solid var(--glass-border);
+      background: linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.02) 100%);
+      color: var(--text-main);
+      transition: all 0.2s ease;
+    }
+
+    .btn-theme-inline {
+      border: 1px dashed var(--glass-border) !important;
+      background: transparent !important;
+      color: var(--text-sub) !important;
+      font-size: 0.8rem !important;
+      font-weight: 600;
+      border-radius: 10px;
+      padding: 6px 12px;
+    }
+
+    .form-label { font-size: 0.85rem; font-weight: 700; color: var(--text-main) !important; margin-bottom: 5px; }
+    .form-control, .form-select {
+      background-color: var(--input-bg) !important;
+      border: 1.5px solid var(--input-border) !important;
+      border-radius: 12px !important;
+      padding: 8px 12px;
+      font-size: 0.88rem;
+      color: var(--text-main) !important;
+      width: 100% !important;
+    }
+
+    .pay-card {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1.5px solid var(--glass-border);
+      border-radius: 14px;
+      padding: 12px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .pay-card:hover { background: rgba(255, 255, 255, 0.08); }
+    .pay-card.active {
+      background: rgba(56, 189, 248, 0.15) !important;
+      border-color: #38bdf8 !important;
+    }
+    .pay-icon-box {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+    }
+    .pay-icon-cash { background: #0284c7; color: #ffffff; }
+    .pay-icon-transfer { background: #0d9488; color: #ffffff; }
+
+    .chip-btn {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--glass-border);
+      color: var(--text-main);
+      font-weight: 600;
+      font-size: 0.78rem;
+      border-radius: 9999px;
+      padding: 5px 12px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .chip-btn:hover {
+      background: rgba(56, 189, 248, 0.2);
+      border-color: var(--accent-blue);
+    }
+
+    .rp-input-group {
+      display: flex;
+      align-items: center;
+      background-color: var(--input-bg);
+      border: 1.5px solid var(--input-border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .rp-prefix {
+      padding: 8px 12px;
+      font-weight: 700;
+      color: var(--accent-blue);
+      background: rgba(255, 255, 255, 0.05);
+      border-right: 1px solid var(--input-border);
+    }
+    .rp-input-group input {
+      border: none !important;
+      background: transparent !important;
+      box-shadow: none !important;
+    }
+
+    .pw-container { position: relative; width: 100%; }
+    .pw-container input { padding-right: 40px !important; }
+    .pw-toggle-btn {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: transparent;
+      border: none;
+      color: var(--text-sub);
+      cursor: pointer;
+      z-index: 5;
+      padding: 0;
+    }
+
+    .btn-glow-primary {
+      background: linear-gradient(135deg, #0284c7 0%, #2563eb 100%);
+      border: none;
+      border-radius: 12px;
+      color: #ffffff !important;
+      font-weight: 700;
+    }
+
+    .table-modern {
+      margin: 0;
+      color: var(--text-main) !important;
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+    }
+
+    .table-modern thead th {
+      font-weight: 700;
+      font-size: 0.76rem;
+      text-transform: uppercase;
+      padding: 12px 10px;
+      color: var(--accent-blue) !important;
+      background: rgba(15, 23, 42, 0.6) !important;
+      border-bottom: 2px solid var(--glass-border);
+      white-space: nowrap;
+    }
+
+    .table-modern td {
+      padding: 12px 10px;
+      vertical-align: middle;
+      font-size: 0.84rem;
+      color: var(--text-main) !important;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      word-break: normal;
+    }
+
+    .table-modern tbody tr:hover { background-color: rgba(255, 255, 255, 0.03); }
+    .nowrap-text { white-space: nowrap !important; }
+
+    .mobile-card-item {
+      display: none;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--glass-border);
+      border-radius: 16px;
+      padding: 14px;
+      margin-bottom: 12px;
+      cursor: pointer;
+      touch-action: pan-y;
+      user-select: none;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .mobile-card-item:hover, .mobile-card-item:active {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 25px rgba(0, 0, 0, 0.5), 0 0 10px rgba(56, 189, 248, 0.2);
+    }
+
+    .sortable-ghost { 
+      opacity: 0.4; 
+      background: rgba(56, 189, 248, 0.2) !important;
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.6) !important;
+    }
+
+    .modal-content {
+      background-color: var(--modal-bg) !important;
+      color: var(--text-main) !important;
+      border: 1px solid var(--glass-border);
+      border-radius: 16px;
+    }
+
+    #globalLoader {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(11, 19, 41, 0.85);
+      backdrop-filter: blur(8px);
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    @media screen and (max-width: 768px) {
+      .main-wrapper { padding: 12px 8px !important; }
+      .card-box { width: 92vw !important; max-width: 340px !important; padding: 20px 14px !important; }
+      .card-user, .card-dashboard { width: 95vw !important; max-width: 100% !important; padding: 16px 12px !important; }
+      .table-desktop-view { display: none !important; }
+      .mobile-card-item { display: block !important; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="globalLoader" class="hidden">
+  <div class="spinner-border text-info" style="width: 3rem; height: 3rem;" role="status"></div>
+  <div class="mt-3 text-white fw-bold" id="loaderText">Memuat...</div>
+</div>
+
+<div class="main-wrapper">
+
+  <!-- 1. LANDING SCREEN -->
+  <div id="screenRole" class="card glass-card p-4 text-center card-box">
+    <div class="mb-2 mt-1">
+      <span class="fs-1 text-info"><i class="fa-solid fa-utensils"></i></span>
+    </div>
+    <h6 class="fw-bold mb-3 fs-6" style="color: var(--accent-blue);">Aplikasi Pesan Makan</h6>
+    
+    <div class="d-grid gap-2 w-100 mb-2">
+      <button class="btn btn-role-gradient d-flex align-items-center justify-content-center" onclick="showUserScreen()">
+        <i class="fa-solid fa-burger me-2 text-info"></i> Pesan Makanan
+      </button>
+      <button class="btn btn-role-gradient d-flex align-items-center justify-content-center" onclick="showLoginScreen()">
+        <i class="fa-solid fa-user-shield me-2 text-danger"></i> Admin
+      </button>
+    </div>
+
+    <div class="pt-2 border-top border-secondary border-opacity-25 mt-2">
+      <button class="btn btn-theme-inline w-100" onclick="toggleTheme()">
+        <i id="themeIcon" class="fa-solid fa-moon me-1"></i> <span id="themeText">Mode Gelap</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- 2. FORM USER / KARYAWAN -->
+  <div id="screenUser" class="card glass-card p-4 card-user hidden">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h6 class="m-0 fw-bold fs-6" style="color: var(--accent-blue);">
+        <i class="fa-solid fa-user me-1"></i> Pemesanan
+      </h6>
+      <button class="btn btn-sm btn-outline-secondary rounded-pill px-3 fw-semibold" onclick="resetToHome()">
+        <i class="fa-solid fa-arrow-left me-1"></i> Kembali
+      </button>
+    </div>
+    
+    <div id="userNavGroup" class="btn-group w-100 mb-3">
+      <button id="btnTabForm" class="btn btn-glow-primary btn-nav-custom fw-bold active" onclick="switchUserTab('form')">
+        <i class="fa-solid fa-pen-to-square me-1"></i> Form Pesanan
+      </button>
+      <button id="btnTabList" class="btn btn-outline-secondary btn-nav-custom fw-bold" onclick="switchUserTab('list')">
+        <i class="fa-solid fa-list-check me-1"></i> Lihat Daftar <span id="badgeTotalUser" class="badge bg-info text-dark ms-1 rounded-pill">0</span>
+      </button>
+    </div>
+
+    <div id="tokoClosedNotice" class="alert alert-danger bg-danger bg-opacity-25 text-danger border-0 text-center my-3 hidden">
+      <i class="fa-solid fa-circle-xmark me-1 fs-5 d-block mb-1"></i>
+      <strong>Pemesanan Ditutup!</strong><br>
+      <small>Admin sedang menutup form pemesanan makanan saat ini.</small>
+    </div>
+
+    <div id="viewUserForm" class="w-100">
+      <form id="formPesan" onsubmit="handleUserSubmit(event)">
+        <div class="mb-3">
+          <label class="form-label"><i class="fa-solid fa-id-card me-1 text-info"></i> Nama Pemesan</label>
+          <input type="text" id="nama" class="form-control" required placeholder="Masukkan Nama">
+        </div>
+        <div class="mb-3">
+          <label class="form-label"><i class="fa-solid fa-bowl-food me-1 text-info"></i> Pesanan</label>
+          <textarea id="pesanan" class="form-control" rows="2" required placeholder="Tuliskan makanan/minuman"></textarea>
+        </div>
+        
+        <div class="mb-3">
+          <label class="form-label mb-2"><i class="fa-solid fa-credit-card me-1 text-info"></i> Metode Pembayaran</label>
+          <input type="hidden" id="metode" value="">
+          
+          <div class="row g-3">
+            <div class="col-6">
+              <div id="cardCash" class="pay-card" onclick="selectMetode('Cash')">
+                <div class="d-flex justify-content-between align-items-center">
+                  <div class="d-flex align-items-center gap-2">
+                    <div class="pay-icon-box pay-icon-cash">
+                      <i class="fa-solid fa-wallet"></i>
+                    </div>
+                    <span class="fw-bold fs-6">Cash</span>
+                  </div>
+                  <i id="checkCash" class="fa-regular fa-circle text-secondary fs-5"></i>
+                </div>
+              </div>
+              <small id="noteCash" class="text-danger fw-semibold d-block mt-1 hidden" style="font-size: 0.75rem; line-height: 1.3;">
+                Silakan berikan uangnya ke petugas yang membelikan
+              </small>
+            </div>
+
+            <div class="col-6">
+              <div id="cardTransfer" class="pay-card" onclick="selectMetode('Transfer')">
+                <div class="d-flex justify-content-between align-items-center">
+                  <div class="d-flex align-items-center gap-2">
+                    <div class="pay-icon-box pay-icon-transfer">
+                      <i class="fa-solid fa-building-columns"></i>
+                    </div>
+                    <span class="fw-bold fs-6">Transfer</span>
+                  </div>
+                  <i id="checkTransfer" class="fa-regular fa-circle text-secondary fs-5"></i>
+                </div>
+              </div>
+              <small id="noteTransfer" class="text-danger fw-semibold d-block mt-1 hidden" style="font-size: 0.75rem; line-height: 1.3;">
+                Silakan konfirmasi ke petugas yang membelikan
+              </small>
+            </div>
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label mb-1"><i class="fa-solid fa-money-bill-wave me-1 text-info"></i> Uang Diberikan (Rp)</label>
+          <div class="rp-input-group mb-2">
+            <span class="rp-prefix">Rp</span>
+            <input type="text" id="uang" class="form-control fw-bold fs-6" required placeholder="50.000" oninput="formatInputRibuan(this)">
+          </div>
+
+          <div class="d-flex gap-2 flex-wrap">
+            <button type="button" class="chip-btn" onclick="setQuickNominal(20000)">+ Rp 20.000</button>
+            <button type="button" class="chip-btn" onclick="setQuickNominal(50000)">+ Rp 50.000</button>
+            <button type="button" class="chip-btn" onclick="setQuickNominal(100000)">+ Rp 100.000</button>
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label"><i class="fa-solid fa-note-sticky me-1 text-info"></i> Catatan (Opsional)</label>
+          <textarea id="catatan" class="form-control" rows="2" placeholder="Contoh: Tidak Pedas"></textarea>
+        </div>
+        <button type="submit" id="btnSubmitUser" class="btn btn-glow-primary w-100 py-2.5 fw-bold fs-6">
+          <i class="fa-solid fa-paper-plane me-2"></i> Kirim Pesanan
+        </button>
+      </form>
+      <div id="userAlert" class="mt-2 alert hidden" style="font-size:0.85rem;"></div>
+    </div>
+
+    <div id="viewUserList" class="hidden">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <span class="small fw-bold text-sub">
+          <i class="fa-solid fa-clock-rotate-left me-1 text-info"></i> Riwayat Pesanan Hari Ini <small class="text-info">(Klik baris untuk detail)</small>
+        </span>
+        <button class="btn btn-sm btn-outline-info rounded-pill px-3 py-1 fw-semibold" style="font-size: 0.75rem;" onclick="loadUserListData()">
+          <i class="fa-solid fa-rotate me-1"></i> Refresh
+        </button>
+      </div>
+      <div id="containerUserList">
+        <div class="table-desktop-view table-responsive">
+          <table class="table table-modern align-middle">
+            <thead>
+              <tr>
+                <th style="width: 22%;">WAKTU</th>
+                <th style="width: 20%;">NAMA</th>
+                <th style="width: 34%;">PESANAN</th>
+                <th class="text-center" style="width: 10%;">BAYAR</th>
+                <th class="text-end" style="width: 14%;">UANG</th>
+              </tr>
+            </thead>
+            <tbody id="tabelUserList"></tbody>
+          </table>
+        </div>
+        <div id="cardsUserList"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. LOGIN ADMIN -->
+  <div id="screenLogin" class="card glass-card p-4 card-box hidden">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h6 class="m-0 text-danger fw-bold fs-6"><i class="fa-solid fa-lock me-2"></i> Login Admin</h6>
+      <button class="btn btn-sm btn-outline-secondary rounded-pill px-3 fw-semibold" onclick="resetToHome()">
+        <i class="fa-solid fa-arrow-left me-1"></i> Kembali
+      </button>
+    </div>
+    <hr class="my-2">
+    
+    <form onsubmit="handleLogin(event)">
+      <div class="mb-3">
+        <label class="form-label">Username</label>
+        <input type="text" id="adminUser" class="form-control" required placeholder="Masukkan username">
+      </div>
+      
+      <div class="mb-4">
+        <label class="form-label">Password</label>
+        <div class="pw-container">
+          <input type="password" id="adminPass" class="form-control" required placeholder="Masukkan password">
+          <button type="button" class="pw-toggle-btn" onclick="togglePasswordVisibility()">
+            <i class="fa-solid fa-eye" id="passIcon"></i>
+          </button>
+        </div>
+      </div>
+      
+      <button type="submit" id="btnLogin" class="btn btn-danger w-100 py-2 fw-bold">
+        <i class="fa-solid fa-right-to-bracket me-1"></i> Masuk Admin
+      </button>
+    </form>
+    
+    <div id="loginAlert" class="mt-3 alert alert-danger bg-danger bg-opacity-25 text-danger border-0 hidden" style="font-size: 0.85rem;"></div>
+  </div>
+
+  <!-- 4. DASHBOARD ADMIN -->
+  <div id="screenAdmin" class="card glass-card p-3 card-dashboard hidden">
+    <div class="d-flex justify-content-between align-items-center mb-2 flex-wrap gap-2">
+      <div>
+        <h6 class="m-0 fw-bold text-danger fs-6">
+          <i class="fa-solid fa-gauge-high me-1"></i> Dashboard Admin
+          <span id="badgeTotalAdmin" class="badge bg-danger ms-1 rounded-pill" style="font-size:0.75rem;">0 Pesanan</span>
+        </h6>
+      </div>
+      
+      <div class="d-flex align-items-center gap-2 flex-wrap">
+        <button id="btnToggleToko" class="btn btn-sm btn-success rounded-pill fw-bold" onclick="toggleToko()">
+          <i class="fa-solid fa-circle me-1"></i> BUKA
+        </button>
+        <button class="btn btn-sm btn-outline-info rounded-pill px-3 py-1 fw-semibold" onclick="loadAdminData()">
+          <i class="fa-solid fa-rotate me-1"></i> Refresh
+        </button>
+        <button class="btn btn-sm btn-warning rounded-pill px-3 py-1 text-dark fw-bold" onclick="confirmResetData()">
+          <i class="fa-solid fa-broom me-1"></i> Reset Data
+        </button>
+        <button class="btn btn-sm btn-outline-secondary rounded-pill px-3 py-1 fw-semibold" onclick="resetToHome()">
+          <i class="fa-solid fa-right-from-bracket me-1"></i> Keluar
+        </button>
+      </div>
+    </div>
+    <hr class="my-2">
+    
+    <div class="alert alert-info py-1 px-2 mb-2" style="font-size: 0.78rem;">
+      <span><i class="fa-solid fa-hand-pointer me-1"></i> <strong>Tips:</strong> Klik baris pesanan untuk edit/hitung kembalian. Tekan & tahan pada HP untuk urutan.</span>
+    </div>
+
+    <div id="containerAdminList">
+      <div class="table-desktop-view table-responsive">
+        <table class="table table-modern align-middle">
+          <thead>
+            <tr>
+              <th style="width: 12%;">WAKTU</th>
+              <th style="width: 10%;">PEMESAN</th>
+              <th style="width: 22%;">PESANAN</th>
+              <th class="text-center" style="width: 7%;">BAYAR</th>
+              <th class="text-end" style="width: 11%;">UANG</th>
+              <th style="width: 15%;">CATATAN</th>
+              <th class="text-end" style="width: 11%;">TOTAL</th>
+              <th class="text-end" style="width: 11%;">KEMBALIAN</th>
+              <th class="text-center" style="width: 11%;">STATUS</th>
+            </tr>
+          </thead>
+          <tbody id="tabelPesanan"></tbody>
+        </table>
+      </div>
+      <div id="cardsAdminList"></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- POPUP MODAL PREVIEW DETAIL PESANAN KARYAWAN -->
+<div class="modal fade" id="userPreviewModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header py-2">
+        <h6 class="modal-title fw-bold text-info">
+          <i class="fa-solid fa-receipt me-1"></i> Detail Preview Pesanan
+        </h6>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body p-3">
+        <div class="border-bottom border-secondary border-opacity-25 pb-2 mb-2">
+          <div class="d-flex justify-content-between align-items-center">
+            <span class="fw-bold text-info fs-5" id="upNama">-</span>
+            <span class="badge bg-secondary rounded-pill" id="upWaktu">-</span>
+          </div>
+        </div>
+        
+        <div class="mb-3">
+          <small class="text-sub d-block mb-1 fw-semibold">Pesanan:</small>
+          <div class="p-2 rounded-3 bg-dark bg-opacity-50 text-main fw-semibold" id="upPesanan">-</div>
+        </div>
+
+        <div class="row g-2 mb-3">
+          <div class="col-6">
+            <small class="text-sub d-block mb-1">Metode Bayar:</small>
+            <span class="badge bg-success fs-6 rounded-pill" id="upMetode">Cash</span>
+          </div>
+          <div class="col-6 text-end">
+            <small class="text-sub d-block mb-1">Uang Diberikan:</small>
+            <strong class="text-warning fs-6" id="upUang">Rp 0</strong>
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <small class="text-sub d-block mb-1">Catatan:</small>
+          <div class="p-2 rounded-3 bg-secondary bg-opacity-10 text-sub small" id="upCatatan">-</div>
+        </div>
+
+        <div class="border-top border-secondary border-opacity-25 pt-3">
+          <div class="d-flex justify-content-between align-items-center mb-1">
+            <span class="text-sub">Total Belanja Makanan:</span>
+            <strong class="text-danger" id="upHarga">-</strong>
+          </div>
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <span class="text-sub">Kembalian / Sisa:</span>
+            <strong class="text-success" id="upKembalian">-</strong>
+          </div>
+          <div class="d-flex justify-content-between align-items-center">
+            <span class="text-sub">Status Belanja:</span>
+            <span class="badge bg-warning text-dark rounded-pill" id="upStatus">Belum Dibelanjakan</span>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer py-2">
+        <button type="button" class="btn btn-sm btn-secondary rounded-pill px-4" data-bs-dismiss="modal">Tutup</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- POPUP WELCOME ADMIN MODAL -->
+<div class="modal fade" id="welcomeModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-sm">
+    <div class="modal-content text-center p-3">
+      <div class="text-success mb-2 fs-1">
+        <i class="fa-solid fa-circle-check"></i>
+      </div>
+      <h5 class="fw-bold text-main mb-1">Selamat Datang!</h5>
+      <p class="text-sub small mb-3" id="welcomeMessage">Anda berhasil masuk sebagai Admin.</p>
+      <button type="button" class="btn btn-success w-100 fw-bold rounded-pill" data-bs-dismiss="modal">Lanjutkan</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL EDIT ADMIN -->
+<div class="modal fade" id="previewModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header py-2">
+        <h6 class="modal-title fw-bold text-danger" style="font-size: 0.95rem;">
+          <i class="fa-solid fa-pen-to-square me-1"></i> Edit Pesanan
+        </h6>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body p-3">
+        <form id="formEditAdmin" onsubmit="handleSaveEdit(event)">
+          <input type="hidden" id="editRowIndex">
+          
+          <div class="row g-2 mb-2">
+            <div class="col-6">
+              <label class="form-label">Waktu</label>
+              <input type="text" id="editWaktu" class="form-control" readonly>
+            </div>
+            <div class="col-6">
+              <label class="form-label">Nama Pemesan</label>
+              <input type="text" id="editNama" class="form-control" readonly>
+            </div>
+          </div>
+
+          <div class="mb-2">
+            <label class="form-label text-info">Detail Pesanan</label>
+            <textarea id="editPesanan" class="form-control" rows="2" required></textarea>
+          </div>
+
+          <div class="row g-2 mb-2">
+            <div class="col-6">
+              <label class="form-label">Jenis Pembayaran</label>
+              <input type="text" id="editMetode" class="form-control" readonly>
+            </div>
+            <div class="col-6">
+              <label class="form-label text-info">Uang yang di berikan (Rp)</label>
+              <input type="text" id="editUang" class="form-control" required oninput="formatInputRibuan(this); updateKembalianPreview();">
+            </div>
+          </div>
+
+          <div class="mb-2">
+            <label class="form-label">Catatan</label>
+            <textarea id="editCatatan" class="form-control" rows="2" placeholder="Catatan..."></textarea>
+          </div>
+
+          <div class="mb-2">
+            <label class="form-label text-warning"><i class="fa-solid fa-box me-1"></i> Status Pembelanjaan</label>
+            <select id="editStatusBelanja" class="form-select border-warning">
+              <option value="Belum Dibelanjakan">Belum Dibelanjakan</option>
+              <option value="Sudah Dibelanjakan">Sudah Dibelanjakan</option>
+            </select>
+          </div>
+
+          <div class="border rounded-3 p-2 mb-2 bg-opacity-10 bg-secondary">
+            <div class="d-flex justify-content-between align-items-center mb-1">
+              <label class="form-label mb-0 text-warning" style="font-size: 0.78rem;">
+                <i class="fa-solid fa-calculator me-1"></i> Rincian Penjumlahan Makanan
+              </label>
+              <button type="button" class="btn btn-sm btn-outline-warning py-0 px-2" style="font-size: 0.75rem;" onclick="addCalcRow()">
+                <i class="fa-solid fa-plus me-1"></i>Tambah
+              </button>
+            </div>
+            <div id="calcRowsContainer"></div>
+          </div>
+
+          <div class="row g-2 mb-3 align-items-center">
+            <div class="col-6">
+              <label class="form-label text-danger">Total Belanja (Rp)</label>
+              <input type="text" id="editHarga" class="form-control border-danger fw-bold" oninput="formatInputRibuan(this); updateKembalianPreview();">
+            </div>
+            <div class="col-6">
+              <label class="form-label">Kembalian</label>
+              <div id="textPreviewKembalian" class="fs-6 fw-bold text-success">-</div>
+            </div>
+          </div>
+
+          <div class="d-flex justify-content-end gap-2">
+            <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill px-3" data-bs-dismiss="modal">Batal</button>
+            <button type="submit" id="btnSaveEdit" class="btn btn-sm btn-danger rounded-pill px-4 fw-bold">Simpan</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // =========================================================================
+  // TEMPELKAN URL WEB APP GOOGLE APPS SCRIPT ANDA DI BAWAH INI:
+  // =========================================================================
+  const GAS_API_URL = "https://script.google.com/macros/s/AKfycbzqlhQgF9IRIXnoO0MHhQ-yUZQlsFHlOfujPNpzphS_QjkhhMOUPPhQakYi17vMqlDh0g/exec";
+
+  let cachedData = [];
+  let bsModalInstance = null;
+  let bsUserPreviewModalInstance = null;
+  let bsWelcomeModalInstance = null;
+  let currentStatusToko = 'BUKA';
+  let sortableAdminInstance = null;
+  let autoRefreshInterval = null;
+
+  // Fungsi Jembatan Komunikasi ke Google Sheets API
+  async function callGAS(action, params = {}) {
+    try {
+      const response = await fetch(GAS_API_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'text/plain;charset=utf-8'
+        },
+        body: JSON.stringify({ action: action, ...params })
+      });
+      return await response.json();
+    } catch (error) {
+      console.error("Error API GAS:", error);
+      throw new Error("Gagal terhubung ke server Google Sheets. Pastikan URL API benar.");
+    }
+  }
+
+  function showLoader(text = "Memuat...") {
+    document.getElementById('loaderText').innerText = text;
+    document.getElementById('globalLoader').classList.remove('hidden');
+  }
+
+  function hideLoader() {
+    document.getElementById('globalLoader').classList.add('hidden');
+  }
+
+  function formatRupiah(val) {
+    if (val === "" || val === undefined || val === null || isNaN(val)) return "-";
+    return 'Rp ' + Number(val).toLocaleString('id-ID');
+  }
+
+  function cleanNumber(str) {
+    if (typeof str === 'number') return str;
+    return Number(String(str).replace(/\D/g, '')) || 0;
+  }
+
+  function formatInputRibuan(el) {
+    let val = el.value.replace(/\D/g, '');
+    el.value = val !== '' ? Number(val).toLocaleString('id-ID') : '';
+  }
+
+function selectMetode(val) {
+    document.getElementById('metode').value = val;
+    const cardCash = document.getElementById('cardCash');
+    const cardTransfer = document.getElementById('cardTransfer');
+    const checkCash = document.getElementById('checkCash');
+    const checkTransfer = document.getElementById('checkTransfer');
+    const noteCash = document.getElementById('noteCash');
+    const noteTransfer = document.getElementById('noteTransfer');
+
+    if (val === 'Cash') {
+      cardCash.className = 'pay-card active';
+      cardTransfer.className = 'pay-card';
+      checkCash.className = 'fa-solid fa-circle-check text-info fs-5';
+      checkTransfer.className = 'fa-regular fa-circle text-secondary fs-5';
+      noteCash.classList.remove('hidden');
+      noteTransfer.classList.add('hidden');
+    } else if (val === 'Transfer') {
+      cardCash.className = 'pay-card';
+      cardTransfer.className = 'pay-card active';
+      checkCash.className = 'fa-regular fa-circle text-secondary fs-5';
+      checkTransfer.className = 'fa-solid fa-circle-check text-info fs-5';
+      noteCash.classList.add('hidden');
+      noteTransfer.classList.remove('hidden');
+    } else {
+      cardCash.className = 'pay-card';
+      cardTransfer.className = 'pay-card';
+      checkCash.className = 'fa-regular fa-circle text-secondary fs-5';
+      checkTransfer.className = 'fa-regular fa-circle text-secondary fs-5';
+      noteCash.classList.add('hidden');
+      noteTransfer.classList.add('hidden');
+    }
+  }
+
+  function setQuickNominal(val) {
+    document.getElementById('uang').value = val.toLocaleString('id-ID');
+  }
+
+  function formatWaktuBersih(strWaktu) {
+    if (!strWaktu) return "-";
+    if (typeof strWaktu === 'string' && strWaktu.includes('GMT')) {
+      const d = new Date(strWaktu);
+      if (!isNaN(d.getTime())) {
+        const tgl = String(d.getDate()).padStart(2, '0');
+        const bln = String(d.getMonth() + 1).padStart(2, '0');
+        const thn = d.getFullYear();
+        const jam = String(d.getHours()).padStart(2, '0');
+        const mnt = String(d.getMinutes()).padStart(2, '0');
+        return `${tgl}/${bln}/${thn} ${jam}:${mnt}`;
+      }
+    }
+    return strWaktu;
+  }
+
+  function toggleTheme() {
+    const htmlEl = document.documentElement;
+    const currentTheme = htmlEl.getAttribute('data-bs-theme');
+    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    htmlEl.setAttribute('data-bs-theme', newTheme);
+    document.getElementById('themeIcon').className = newTheme === 'dark' ? 'fa-solid fa-moon me-1' : 'fa-solid fa-sun me-1';
+    document.getElementById('themeText').innerText = newTheme === 'dark' ? 'Mode Gelap' : 'Mode Terang';
+  }
+
+  function togglePasswordVisibility() {
+    const passInput = document.getElementById('adminPass');
+    const passIcon = document.getElementById('passIcon');
+    if (passInput.type === 'password') {
+      passInput.type = 'text';
+      passIcon.className = 'fa-solid fa-eye-slash';
+    } else {
+      passInput.type = 'password';
+      passIcon.className = 'fa-solid fa-eye';
+    }
+  }
+
+  function hideAllScreens() {
+    document.getElementById('screenRole').classList.add('hidden');
+    document.getElementById('screenUser').classList.add('hidden');
+    document.getElementById('screenLogin').classList.add('hidden');
+    document.getElementById('screenAdmin').classList.add('hidden');
+    document.getElementById('formPesan').reset();
+    selectMetode('');
+  }
+
+  function resetToHome() {
+    stopAutoRefreshAdmin();
+    hideAllScreens();
+    document.getElementById('screenRole').classList.remove('hidden');
+  }
+
+  async function showUserScreen() {
+    stopAutoRefreshAdmin();
+    showLoader("Mengecek Status Pemesanan...");
+    try {
+      const status = await callGAS('getStatusToko');
+      hideLoader();
+      hideAllScreens();
+      document.getElementById('screenUser').classList.remove('hidden');
+      currentStatusToko = status || 'BUKA';
+      applyStatusTokoUI();
+      switchUserTab('form');
+      fetchTotalCountUser();
+    } catch (err) {
+      hideLoader();
+      alert(err.message);
+    }
+  }
+
+  function applyStatusTokoUI() {
+    const closedAlert = document.getElementById('tokoClosedNotice');
+    const formPesan = document.getElementById('formPesan');
+
+    if (currentStatusToko === 'TUTUP') {
+      closedAlert.classList.remove('hidden');
+      formPesan.classList.add('hidden');
+    } else {
+      closedAlert.classList.add('hidden');
+      formPesan.classList.remove('hidden');
+    }
+  }
+
+  function showLoginScreen() {
+    stopAutoRefreshAdmin();
+    hideAllScreens();
+    document.getElementById('screenLogin').classList.remove('hidden'); 
+    document.getElementById('formPesan').reset();
+    selectMetode('');
+  }
+
+  function switchUserTab(tab) {
+    if (tab === 'form') {
+      document.getElementById('viewUserForm').classList.remove('hidden');
+      document.getElementById('viewUserList').classList.add('hidden');
+      document.getElementById('btnTabForm').className = 'btn btn-glow-primary btn-nav-custom fw-bold active';
+      document.getElementById('btnTabList').className = 'btn btn-outline-secondary btn-nav-custom fw-bold';
+    } else {
+      document.getElementById('viewUserForm').classList.add('hidden');
+      document.getElementById('viewUserList').classList.remove('hidden');
+      document.getElementById('btnTabForm').className = 'btn btn-outline-secondary btn-nav-custom fw-bold';
+      document.getElementById('btnTabList').className = 'btn btn-glow-primary btn-nav-custom fw-bold active';
+      loadUserListData();
+    }
+  }
+
+  async function fetchTotalCountUser() {
+    try {
+      const data = await callGAS('getDaftarPesanan');
+      document.getElementById('badgeTotalUser').innerText = data ? data.length : 0;
+    } catch (e) {}
+  }
+
+  async function handleUserSubmit(e) {
+    e.preventDefault();
+    if (currentStatusToko === 'TUTUP') {
+      alert('Pemesanan saat ini sedang DITUTUP oleh Admin!');
+      return;
+    }
+    const metode = document.getElementById('metode').value;
+    if (!metode) {
+    alert('Silakan pilih metode pembayaran (Cash atau Transfer) terlebih dahulu!');
+    return;
+  }
+
+    showLoader("Mengirim Pesanan...");
+    const form = {
+      nama: document.getElementById('nama').value.trim(),
+      pesanan: document.getElementById('pesanan').value.trim(),
+      metode: document.getElementById('metode').value,
+      uang: cleanNumber(document.getElementById('uang').value),
+      catatan: document.getElementById('catatan').value.trim()
+    };
+
+    try {
+      const res = await callGAS('simpanPesanan', { form: form });
+      hideLoader();
+      const alertBox = document.getElementById('userAlert');
+      if (res && res.success) {
+        alertBox.className = "alert alert-success bg-success bg-opacity-25 text-success border-0 mt-2";
+        alertBox.innerText = res.message;
+        document.getElementById('formPesan').reset();
+        selectMetode('');
+        fetchTotalCountUser();
+      } else {
+        alertBox.className = "alert alert-danger bg-danger bg-opacity-25 text-danger border-0 mt-2";
+        alertBox.innerText = res ? res.message : "Terjadi kesalahan sistem.";
+      }
+      alertBox.classList.remove('hidden');
+    } catch (err) {
+      hideLoader();
+      alert("Error: " + err.message);
+    }
+  }
+
+  async function loadUserListData() {
+    const tbody = document.getElementById('tabelUserList');
+    const cardsDiv = document.getElementById('cardsUserList');
+    tbody.innerHTML = '<tr><td colspan="5" class="text-center py-3"><i class="fa-solid fa-spinner fa-spin"></i> Memuat...</td></tr>';
+    cardsDiv.innerHTML = '<div class="text-center py-3"><i class="fa-solid fa-spinner fa-spin"></i> Memuat...</div>';
+
+    try {
+      const data = await callGAS('getDaftarPesanan');
+      cachedData = data || [];
+      document.getElementById('badgeTotalUser').innerText = cachedData.length;
+      tbody.innerHTML = '';
+      cardsDiv.innerHTML = '';
+      
+      if (cachedData.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" class="text-center py-3">Belum ada pesanan.</td></tr>';
+        cardsDiv.innerHTML = '<div class="text-center py-3">Belum ada pesanan.</div>';
+        return;
+      }
+
+      cachedData.forEach((item, index) => {
+        const waktuBagus = formatWaktuBersih(item.waktu);
+        const tr = document.createElement('tr');
+        tr.style.cursor = 'pointer';
+        tr.onclick = function() { openUserPreviewModal(index); };
+        tr.innerHTML = `
+          <td><small class="fw-semibold text-sub nowrap-text">${waktuBagus}</small></td>
+          <td class="fw-bold text-info">${item.nama}</td>
+          <td class="fw-semibold">${item.pesanan}</td>
+          <td class="text-center"><span class="badge ${item.metode === 'Cash' ? 'bg-success' : 'bg-info'} rounded-pill">${item.metode}</span></td>
+          <td class="text-end fw-bold nowrap-text">${formatRupiah(item.uang)}</td>
+        `;
+        tbody.appendChild(tr);
+
+        const card = document.createElement('div');
+        card.className = "mobile-card-item";
+        card.onclick = function() { openUserPreviewModal(index); };
+        card.innerHTML = `
+          <div class="d-flex justify-content-between align-items-center mb-1">
+            <span class="fw-bold text-info">${item.nama}</span>
+            <small class="text-sub">${waktuBagus}</small>
+          </div>
+          <div class="fw-bold mb-2">${item.pesanan}</div>
+          <div class="d-flex justify-content-between align-items-center">
+            <span class="badge ${item.metode === 'Cash' ? 'bg-success' : 'bg-info'} rounded-pill">${item.metode}</span>
+            <span class="fw-bold text-success">${formatRupiah(item.uang)}</span>
+          </div>
+        `;
+        cardsDiv.appendChild(card);
+      });
+    } catch (err) {
+      tbody.innerHTML = `<tr><td colspan="5" class="text-center text-danger py-3">${err.message}</td></tr>`;
+    }
+  }
+
+  function openUserPreviewModal(index) {
+    const item = cachedData[index];
+    if (!item) return;
+
+    document.getElementById('upNama').innerText = item.nama;
+    document.getElementById('upWaktu').innerText = formatWaktuBersih(item.waktu);
+    document.getElementById('upPesanan').innerText = item.pesanan;
+    document.getElementById('upMetode').innerText = item.metode;
+    document.getElementById('upMetode').className = `badge ${item.metode === 'Cash' ? 'bg-success' : 'bg-info'} fs-6 rounded-pill`;
+    document.getElementById('upUang').innerText = formatRupiah(item.uang);
+    document.getElementById('upCatatan').innerText = item.catatan || '-';
+    
+    document.getElementById('upHarga').innerText = formatRupiah(item.harga);
+    document.getElementById('upKembalian').innerText = formatRupiah(item.kembalian);
+    
+    const isDone = item.statusBelanja === 'Sudah Dibelanjakan';
+    document.getElementById('upStatus').className = `badge ${isDone ? 'bg-success' : 'bg-warning text-dark'} rounded-pill`;
+    document.getElementById('upStatus').innerText = item.statusBelanja || 'Belum Dibelanjakan';
+
+    if (!bsUserPreviewModalInstance) {
+      bsUserPreviewModalInstance = new bootstrap.Modal(document.getElementById('userPreviewModal'));
+    }
+    bsUserPreviewModalInstance.show();
+  }
+
+  async function handleLogin(e) {
+    e.preventDefault();
+    showLoader("Memverifikasi Login...");
+
+    const u = document.getElementById('adminUser').value;
+    const p = document.getElementById('adminPass').value;
+
+    try {
+      const res = await callGAS('loginAdmin', { username: u, password: p });
+      hideLoader();
+      if (res.success) {
+        document.getElementById('loginAlert').classList.add('hidden');
+        document.getElementById('adminPass').value = '';
+        hideAllScreens();
+        document.getElementById('screenAdmin').classList.remove('hidden');
+        
+        document.getElementById('welcomeMessage').innerText = res.message;
+        if (!bsWelcomeModalInstance) {
+          bsWelcomeModalInstance = new bootstrap.Modal(document.getElementById('welcomeModal'));
+        }
+        bsWelcomeModalInstance.show();
+
+        loadAdminData();
+        loadStatusTokoAdmin();
+        startAutoRefreshAdmin();
+      } else {
+        const alertBox = document.getElementById('loginAlert');
+        alertBox.innerText = res.message;
+        alertBox.classList.remove('hidden');
+      }
+    } catch (err) {
+      hideLoader();
+      alert(err.message);
+    }
+  }
+
+  async function loadStatusTokoAdmin() {
+    try {
+      const status = await callGAS('getStatusToko');
+      currentStatusToko = status || 'BUKA';
+      renderButtonToko();
+    } catch (e) {}
+  }
+
+  function renderButtonToko() {
+    const btn = document.getElementById('btnToggleToko');
+    if (currentStatusToko === 'BUKA') {
+      btn.className = "btn btn-sm btn-success rounded-pill fw-bold";
+      btn.innerHTML = '<i class="fa-solid fa-circle me-1"></i> BUKA';
+    } else {
+      btn.className = "btn btn-sm btn-secondary rounded-pill fw-bold";
+      btn.innerHTML = '<i class="fa-solid fa-circle-xmark me-1"></i> TUTUP';
+    }
+  }
+
+  async function toggleToko() {
+    showLoader("Mengubah Status Form...");
+    const nextStatus = currentStatusToko === 'BUKA' ? 'TUTUP' : 'BUKA';
+    try {
+      const resStatus = await callGAS('toggleStatusToko', { status: nextStatus });
+      hideLoader();
+      currentStatusToko = resStatus;
+      renderButtonToko();
+    } catch (err) {
+      hideLoader();
+      alert(err.message);
+    }
+  }
+
+  async function loadAdminData() {
+    const tbody = document.getElementById('tabelPesanan');
+    const cardsDiv = document.getElementById('cardsAdminList');
+
+    if (tbody.children.length === 0 && cardsDiv.children.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="9" class="text-center py-3"><i class="fa-solid fa-spinner fa-spin"></i> Memuat...</td></tr>';
+      cardsDiv.innerHTML = '<div class="text-center py-3"><i class="fa-solid fa-spinner fa-spin"></i> Memuat...</div>';
+    }
+
+    try {
+      const data = await callGAS('getDaftarPesanan');
+      cachedData = data || [];
+      document.getElementById('badgeTotalAdmin').innerText = `${cachedData.length} Pesanan`;
+      tbody.innerHTML = '';
+      cardsDiv.innerHTML = '';
+
+      if (cachedData.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="9" class="text-center py-3">Belum ada pesanan masuk.</td></tr>';
+        cardsDiv.innerHTML = '<div class="text-center py-3">Belum ada pesanan masuk.</div>';
+        return;
+      }
+
+      cachedData.forEach((item, index) => {
+        const waktuBagus = formatWaktuBersih(item.waktu);
+        const isBelanjaDone = item.statusBelanja === 'Sudah Dibelanjakan';
+        const statusBadgeClass = isBelanjaDone ? 'bg-success' : 'bg-warning text-dark';
+        const textHarga = formatRupiah(item.harga);
+        const textKembalian = formatRupiah(item.kembalian);
+
+        const tr = document.createElement('tr');
+        tr.style.cursor = "pointer";
+        tr.onclick = function() { openEditAdminModal(index); };
+        tr.innerHTML = `
+          <td><small class="fw-semibold text-sub nowrap-text">${waktuBagus}</small></td>
+          <td class="fw-bold text-info">${item.nama}</td>
+          <td class="fw-semibold">${item.pesanan}</td>
+          <td class="text-center"><span class="badge ${item.metode === 'Cash' ? 'bg-success' : 'bg-info'} rounded-pill">${item.metode}</span></td>
+          <td class="text-end fw-bold nowrap-text text-warning">${formatRupiah(item.uang)}</td>
+          <td><small class="text-sub">${item.catatan || '-'}</small></td>
+          <td class="text-end fw-bold text-danger nowrap-text">${textHarga}</td>
+          <td class="text-end fw-bold text-success nowrap-text">${textKembalian}</td>
+          <td class="text-center"><span class="badge ${statusBadgeClass} rounded-pill nowrap-text">${item.statusBelanja}</span></td>
+        `;
+        tbody.appendChild(tr);
+
+        const card = document.createElement('div');
+        card.className = "mobile-card-item";
+        card.setAttribute('data-index', index);
+        card.onclick = function(e) { openEditAdminModal(index); };
+
+        card.innerHTML = `
+          <div class="d-flex justify-content-between align-items-center mb-1">
+            <span class="fw-bold text-info fs-6">${item.nama}</span>
+            <small class="text-sub" style="font-size: 0.72rem;">${waktuBagus}</small>
+          </div>
+          
+          <div class="fw-bold mb-1" style="font-size: 0.88rem;">${item.pesanan}</div>
+          <div class="small text-sub mb-2" style="font-size: 0.78rem;">Catatan: ${item.catatan || '-'}</div>
+
+          <div class="d-flex justify-content-between align-items-center mb-1" style="font-size: 0.75rem;">
+            <span class="badge ${item.metode === 'Cash' ? 'bg-success' : 'bg-info'} rounded-pill">${item.metode}</span>
+            <span class="text-sub">Uang yang di berikan: <strong class="text-warning">${formatRupiah(item.uang)}</strong></span>
+          </div>
+
+          <div class="d-flex justify-content-between align-items-center pt-2 border-top border-secondary border-opacity-25" style="font-size: 0.73rem;">
+            <div class="d-flex align-items-center gap-1 flex-wrap">
+              <span>Total Belanja: <strong class="text-danger">${textHarga}</strong></span>
+              <span class="text-sub mx-1">|</span>
+              <span>Kembalian: <strong class="${item.kembalian < 0 ? 'text-danger' : 'text-success'}">${textKembalian}</strong></span>
+            </div>
+            <span class="badge ${statusBadgeClass} rounded-pill ms-1" style="font-size: 0.68rem;">${item.statusBelanja}</span>
+          </div>
+        `;
+        cardsDiv.appendChild(card);
+      });
+
+      initSortableCards();
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  function startAutoRefreshAdmin() {
+    stopAutoRefreshAdmin();
+    autoRefreshInterval = setInterval(function() {
+      const editModalEl = document.getElementById('previewModal');
+      const isModalOpen = editModalEl && editModalEl.classList.contains('show');
+      if (!isModalOpen) {
+        loadAdminData();
+      }
+    }, 5000);
+  }
+
+  function stopAutoRefreshAdmin() {
+    if (autoRefreshInterval) {
+      clearInterval(autoRefreshInterval);
+      autoRefreshInterval = null;
+    }
+  }
+
+  function initSortableCards() {
+    const el = document.getElementById('cardsAdminList');
+    if (!el) return;
+    if (sortableAdminInstance) {
+      sortableAdminInstance.destroy();
+    }
+    sortableAdminInstance = Sortable.create(el, {
+      animation: 150,
+      delay: 400,
+      delayOnTouchOnly: true, 
+      touchStartThreshold: 5,
+      ghostClass: 'sortable-ghost',
+      onEnd: function () {
+        const newOrderArr = [];
+        const cardElements = el.querySelectorAll('.mobile-card-item');
+        cardElements.forEach(cardEl => {
+          const idx = parseInt(cardEl.getAttribute('data-index'));
+          newOrderArr.push(cachedData[idx]);
+        });
+        cachedData = newOrderArr;
+      }
+    });
+  }
+
+  function openEditAdminModal(index) {
+    const item = cachedData[index];
+    if (!item) return;
+
+    document.getElementById('editRowIndex').value = item.rowIndex;
+    document.getElementById('editWaktu').value = formatWaktuBersih(item.waktu);
+    document.getElementById('editNama').value = item.nama;
+    document.getElementById('editPesanan').value = item.pesanan;
+    document.getElementById('editMetode').value = item.metode;
+    
+    document.getElementById('editUang').value = item.uang ? Number(item.uang).toLocaleString('id-ID') : '';
+    document.getElementById('editCatatan').value = item.catatan === '-' ? '' : item.catatan;
+    document.getElementById('editStatusBelanja').value = item.statusBelanja || 'Belum Dibelanjakan';
+    document.getElementById('editHarga').value = item.harga !== '' && item.harga !== undefined ? Number(item.harga).toLocaleString('id-ID') : '';
+
+    const container = document.getElementById('calcRowsContainer');
+    container.innerHTML = '';
+    
+    if (item.rincianHarga) {
+      try {
+        const itemsArr = JSON.parse(item.rincianHarga);
+        if (Array.isArray(itemsArr) && itemsArr.length > 0) {
+          itemsArr.forEach(row => addCalcRow(row.nama || row.label || '', row.harga || row.price || ''));
+        } else {
+          addCalcRow();
+        }
+      } catch (e) {
+        addCalcRow();
+      }
+    } else {
+      addCalcRow();
+    }
+
+    updateKembalianPreview();
+
+    if (!bsModalInstance) {
+      bsModalInstance = new bootstrap.Modal(document.getElementById('previewModal'));
+    }
+    bsModalInstance.show();
+  }
+
+  function addCalcRow(namaVal = '', hargaVal = '') {
+    const container = document.getElementById('calcRowsContainer');
+    const rowId = 'calc_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4);
+
+    const div = document.createElement('div');
+    div.className = 'd-flex align-items-center gap-1 mb-1';
+    div.id = rowId;
+
+    const formattedHarga = hargaVal !== '' ? Number(hargaVal).toLocaleString('id-ID') : '';
+
+    div.innerHTML = `
+      <input type="text" class="form-control form-control-sm calc-item-nama" placeholder="Nama item..." value="${namaVal}">
+      <input type="text" class="form-control form-control-sm calc-item-harga" placeholder="Harga" value="${formattedHarga}" oninput="formatInputRibuan(this); calculateTotalFromCalcRows();">
+      <button type="button" class="btn btn-sm btn-outline-danger py-0 px-2" onclick="removeCalcRow('${rowId}')">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    `;
+    container.appendChild(div);
+  }
+
+  function removeCalcRow(rowId) {
+    const el = document.getElementById(rowId);
+    if (el) {
+      el.remove();
+      calculateTotalFromCalcRows();
+    }
+  }
+
+  function calculateTotalFromCalcRows() {
+    const hargaInputs = document.querySelectorAll('.calc-item-harga');
+    let total = 0;
+    let anyFilled = false;
+
+    hargaInputs.forEach(input => {
+      const val = cleanNumber(input.value);
+      if (val > 0) {
+        total += val;
+        anyFilled = true;
+      }
+    });
+
+    if (anyFilled) {
+      document.getElementById('editHarga').value = total.toLocaleString('id-ID');
+    }
+    updateKembalianPreview();
+  }
+
+  function updateKembalianPreview() {
+    const uang = cleanNumber(document.getElementById('editUang').value);
+    const hargaStr = document.getElementById('editHarga').value;
+    
+    if (hargaStr.trim() === '') {
+      document.getElementById('textPreviewKembalian').innerText = '-';
+      return;
+    }
+
+    const harga = cleanNumber(hargaStr);
+    const sisa = uang - harga;
+
+    if (sisa < 0) {
+      document.getElementById('textPreviewKembalian').className = "fs-6 fw-bold text-danger";
+      document.getElementById('textPreviewKembalian').innerText = `Kurang ${formatRupiah(Math.abs(sisa))}`;
+    } else {
+      document.getElementById('textPreviewKembalian').className = "fs-6 fw-bold text-success";
+      document.getElementById('textPreviewKembalian').innerText = formatRupiah(sisa);
+    }
+  }
+
+  async function handleSaveEdit(e) {
+    e.preventDefault();
+    showLoader("Menyimpan Perubahan...");
+
+    const rincianArr = [];
+    const rows = document.querySelectorAll('#calcRowsContainer > div');
+    rows.forEach(r => {
+      const nama = r.querySelector('.calc-item-nama').value.trim();
+      const harga = cleanNumber(r.querySelector('.calc-item-harga').value);
+      if (nama || harga > 0) {
+        rincianArr.push({ nama: nama, harga: harga });
+      }
+    });
+
+    const payload = {
+      rowIndex: document.getElementById('editRowIndex').value,
+      pesanan: document.getElementById('editPesanan').value.trim(),
+      uang: cleanNumber(document.getElementById('editUang').value),
+      catatan: document.getElementById('editCatatan').value.trim(),
+      statusBelanja: document.getElementById('editStatusBelanja').value,
+      harga: document.getElementById('editHarga').value !== '' ? cleanNumber(document.getElementById('editHarga').value) : '',
+      rincianHarga: JSON.stringify(rincianArr)
+    };
+
+    try {
+      const res = await callGAS('updatePesananAdmin', { payload: payload });
+      hideLoader();
+      if (res && res.success) {
+        if (bsModalInstance) bsModalInstance.hide();
+        loadAdminData();
+      } else {
+        alert(res ? res.message : 'Gagal menyimpan perubahan.');
+      }
+    } catch (err) {
+      hideLoader();
+      alert("Error: " + err.message);
+    }
+  }
+
+  async function confirmResetData() {
+    if (confirm("Apakah Anda yakin ingin menghapus seluruh data pesanan hari ini? Tindakan ini tidak dapat dibatalkan!")) {
+      showLoader("Mereset Data Pesanan...");
+      try {
+        const msg = await callGAS('resetDataPesanan');
+        hideLoader();
+        alert(msg);
+        loadAdminData();
+      } catch (err) {
+        hideLoader();
+        alert(err.message);
+      }
+    }
+  }
+</script>
+</body>
+</html>
