@@ -12,6 +12,45 @@
   <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
   
   <style>
+    .autocomplete-dropdown {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      z-index: 1050;
+      background-color: var(--modal-bg, #1e293b);
+      border: 1px solid var(--input-border, #334155);
+      border-radius: 0.5rem;
+      margin-top: 4px;
+      max-height: 220px;
+      overflow-y: auto;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+    }
+    
+    .autocomplete-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 14px;
+      cursor: pointer;
+      color: var(--text-main, #f8fafc);
+      border-bottom: 1px solid rgba(128, 128, 128, 0.15);
+    }
+    
+    .autocomplete-item:hover {
+      background-color: #2563eb;
+      color: #ffffff;
+    }
+    
+    .autocomplete-avatar {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 1.5px solid #60a5fa;
+      flex-shrink: 0;
+    }
+
     :root {
       --bg-color: #0b1329;
       --bg-gradient: linear-gradient(135deg, #0b1329 0%, #172554 100%);
@@ -354,9 +393,10 @@ html, body {
 
     <div id="viewUserForm" class="w-100">
       <form id="formPesan" onsubmit="handleUserSubmit(event)">
-        <div class="mb-3">
+        <div class="mb-3 position-relative">
           <label class="form-label"><i class="fa-solid fa-id-card me-1 text-info"></i> Nama Pemesan</label>
-          <input type="text" id="nama" class="form-control" required placeholder="">
+          <input type="text" id="nama" class="form-control" required placeholder="" autocomplete="off">
+          <div id="listSaranNama" class="autocomplete-dropdown d-none"></div>
         </div>
         <div class="mb-3">
           <label class="form-label"><i class="fa-solid fa-bowl-food me-1 text-info"></i> Pesanan</label>
@@ -725,6 +765,56 @@ html, body {
   let currentStatusToko = 'BUKA';
   let sortableAdminInstance = null;
   let autoRefreshInterval = null;
+  const dataKaryawan = [
+    { nama: "Cesa", foto: "foto/cesa.jpeg" }
+  ];
+  
+  const inputNamaEl = document.getElementById("nama");
+  const listSaran = document.getElementById("listSaranNama");
+  
+  inputNamaEl.addEventListener("input", function () {
+    const kataKunci = this.value.trim().toLowerCase();
+    listSaran.innerHTML = "";
+    
+    if (!kataKunci) {
+      listSaran.classList.add("d-none");
+      return;
+  }
+  
+  const hasilFilter = dataKaryawan.filter(karyawan =>
+    karyawan.nama.toLowerCase().includes(kataKunci)
+  );
+  
+  if (hasilFilter.length === 0) {
+    listSaran.classList.add("d-none");
+    return;
+  }
+
+  hasilFilter.forEach(item => {
+    const divItem = document.createElement("div");
+    divItem.className = "autocomplete-item";
+    divItem.innerHTML = `
+      <img src="${item.foto}" alt="${item.nama}" class="autocomplete-avatar" 
+           onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(item.nama)}&background=random'">
+      <span class="fw-semibold">${item.nama}</span>
+    `;
+
+    divItem.addEventListener("click", () => {
+      inputNamaEl.value = item.nama;
+      listSaran.classList.add("d-none");
+    });
+
+    listSaran.appendChild(divItem);
+  });
+
+  listSaran.classList.remove("d-none");
+});
+
+document.addEventListener("click", function (e) {
+  if (!inputNamaEl.contains(e.target) && !listSaran.contains(e.target)) {
+    listSaran.classList.add("d-none");
+  }
+});
 
   // Fungsi Jembatan Komunikasi ke Google Sheets API
   async function callGAS(action, params = {}) {
