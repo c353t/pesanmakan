@@ -912,9 +912,20 @@
     let currentStatusToko = 'BUKA';
     let sortableAdminInstance = null;
     let autoRefreshInterval = null;
-    const dataKaryawan = [
-      { nama: "Cesa", foto: "foto/cesa.jpeg" }
-    ];
+    let dataKaryawan = [];
+
+    async function loadMasterKaryawan() {
+      try {
+        const res = await callGAS('getDaftarKaryawan');
+        if (Array.isArray(res)) {
+          dataKaryawan = res;
+        }
+      } catch (e) {
+        console.error("Gagal memuat daftar karyawan:", e);
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', loadMasterKaryawan);
 
     function getFotoKaryawan(namaDicari) {
       if (!namaDicari) return "";
